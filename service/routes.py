@@ -67,9 +67,9 @@ def list_all_accounts():
     accounts = Account.all()
     if not accounts:
         return jsonify([]), 200
-    account_list = [account.to_dict() for account in accounts]
+    account_list = [account.serialize() for account in accounts]
 
-    return jsonify(account_list), 200
+    return jsonify(account_list), status.HTTP_200_OK
 
 
 ######################################################################
