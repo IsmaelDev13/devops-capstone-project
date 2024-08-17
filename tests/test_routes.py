@@ -124,3 +124,56 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     # ADD YOUR TEST CASES HERE ...
+    def test_list_all_accounts(self):
+        """
+        Test listing all accounts
+        """
+        self._create_accounts(3)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 3)
+    
+    def test_read_an_account(self):
+        """
+        Test reading an account by ID
+        """
+        account = self._create_accounts(1)[0]
+        response = self.client.get(f"{BASE_URL}/{account.id}", content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["id"], account.id)
+        self.assertEqual(data["name"], account.name)
+
+    def test_account_not_found(self):
+        """
+        Test reading an account that doesn't exist
+        """
+        response = self.client.get(f'{BASE_URL}/0')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_an_account(self):
+        """
+        Test updating an account
+        """
+        account =self._create_accounts(1)[0]
+        updated_data = {
+            'name': 'Updated Name', 
+        }
+        response = self.client.put(f'{BASE_URL}/{account.id}', json=updated_data)
+        self.assertEqual(response.status_code, status.HTTP_200.OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], "Updated Name")
+        self.assertEqual(data["balance"], 5000)
+
+    def test_delete_an_account(self):
+        """
+        Test deleting an account
+        """
+        account =self._create_accounts(1)[0]
+        response = self.client.delete(f'{BASE_URL}/{account.id}')
+        self.assertEqual(response.status_code, 204)
+
+        response = self.client.get(f'{BASE_URL}/{account.id}')
+        self.assertEqual(response.status_code, 404)
+        
