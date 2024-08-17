@@ -158,14 +158,24 @@ class TestAccountService(TestCase):
         """
         account =self._create_accounts(1)[0]
         updated_data = {
-            'name': 'Updated Name', 
+            'name': 'Updated Name',
+            'balance': 5000 
         }
-        response = self.client.put(f'{BASE_URL}/{account.id}', json=updated_data)
-        self.assertEqual(response.status_code, status.HTTP_200.OK)
+        response = self.client.put(f"{BASE_URL}/{account.id}", json=updated_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["name"], "Updated Name")
         self.assertEqual(data["balance"], 5000)
 
+    def test_update_an_account_not_found(self):
+        """
+        Test updaing an account that doesn't exist
+        """
+        updated_data = {
+            'name':"Updated Name"
+        }
+        response = self.client.put(f"{BASE_URL}/0", json=updated_data)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
     def test_delete_an_account(self):
         """
         Test deleting an account
@@ -177,6 +187,13 @@ class TestAccountService(TestCase):
         response = self.client.get(f'{BASE_URL}/{account.id}')
         self.assertEqual(response.status_code, 404)
     
+    def test_delete_an_account_not_found(self):
+        """
+        Test deleting an account that doesn't exist
+        """
+        response = self.client.delete(f"{BASE_URL}/0")
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
     def test_method_not_allowed(self):
         """
         Illegal method call
