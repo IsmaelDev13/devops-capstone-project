@@ -61,9 +61,13 @@ def create_accounts():
 # LIST ALL ACCOUNTS
 ######################################################################
 
+
 # ... place you code here to LIST accounts ...
 @app.route("/accounts", methods=["GET"])
 def list_all_accounts():
+    """
+    List all accounts
+    """
     accounts = Account.all()
     if not accounts:
         return jsonify([]), 200
@@ -76,6 +80,7 @@ def list_all_accounts():
 # READ AN ACCOUNT
 ######################################################################
 
+
 # ... place you code here to READ an account ...
 @app.route("/accounts/<int:account_id>", methods=["GET"])
 def read_an_account(account_id):
@@ -83,17 +88,20 @@ def read_an_account(account_id):
 
     if not account:
         abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] not found")
+
     account_data = account.serialize()
-
-    return jsonify(account_data), status.HTTP_200_OK        
-
+    return jsonify(account_data), status.HTTP_200_OK
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
 ######################################################################
 
+
 # ... place you code here to UPDATE an account ...
 @app.route("/accounts/<int:account_id>", methods=["PUT"])
 def update_an_account(account_id):
+    """
+    Update an account
+    """
     account = Account.find(account_id)
 
     if not account:
@@ -101,22 +109,27 @@ def update_an_account(account_id):
     try:
         account.deserialize(request.get_json())
         account.update()
+
     except Exception as e:
         abort(400, description=str(e))
-    
     account_data = account.serialize()
     return jsonify(account_data), status.HTTP_200_OK
 ######################################################################
 # DELETE AN ACCOUNT
 ######################################################################
 
+
 # ... place you code here to DELETE an account ...
 @app.route("/accounts/<int:account_id>", methods=["DELETE"])
 def delete_an_account(account_id):
+    """
+    Delete and acccount
+    """
     account = Account.find(account_id)
 
     if account:
         account.delete()
+
     return "", status.HTTP_204_NO_CONTENT
 
 ######################################################################
